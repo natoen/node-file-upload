@@ -19,14 +19,16 @@ const storage = multer.diskStorage({
     callback(null, file.originalname);
   },
 });
+
 const upload = multer({ storage });
-app.post('/upload', (req, res, next) => {
-  upload.array('upload')(req, res, (err) => {
+app.post('/upload', (req, res) => {
+  upload.array('files')(req, res, (err) => {
     if (err) {
-      console.log('MULTER ERROR :', err);
+      console.log('Error :', err);
+      res.status(404).end();
     }
 
-    res.end();
+    res.status(200).end();
   });
 });
 

@@ -2,12 +2,89 @@
 <html>
   <head>
     <title>Node File Upload</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.14.0/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.slim.min.js" integrity="sha256-cRpWjoSOw5KcyIOaZNo4i6fZ9tKPhYYb6i5T9RSVJG8=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <h1>Node File Upload</h1>
-    <form method='post' action='upload' enctype="multipart/form-data">
-      <input type='file' name="upload" webkitdirectory />
+    <h1>Node File Upload</h1><br>
+
+    <h2>Form</h2>
+    <form name="upload" enctype="multipart/form-data">
+      <label>Name:</label>
+      <input type="text" name="name" /><br />
+      <label>Occupation:</label>
+      <input type="text" name="occupation" /><br />
+      <label>City:</label>
+      <input type="text" name="city" /><br />
+      <label>Email:</label>
+      <input type="text" name="country" /><br />
+      <label>Picture:</label>
+      <input type="file" name="files" multiple /><br /><br />
+      <div class="progressbar">.<div class="loaded"></div></div><br /><br />
       <input type='submit' />
     </form>
+
+    <script>
+      $(() => {
+        let uploading;
+
+        $('form').submit(function(event) {
+          event.preventDefault();
+          uploading = true;
+
+          const thisForm = $(this);
+          const button = thisForm.find('input[type="submit"]');
+          const progressbar = thisForm.find('.progressbar');
+          button.prop({ disabled: true });
+          progressbar.css({ visibility: 'visible' });
+          progressbar.contents()[0].textContent = 'uploading. . .';
+
+          const formData = new FormData();
+          thisForm.find('input').each((index, node) => {
+            const type = $(node).attr('type');
+            if (type === 'text') {
+              formData.append(node.name, node.value);
+            } else if (type === 'file') {
+              for (let i = 0; i < node.files.length; i++) {
+                formData.append('files', node.files[i]);
+              }
+            }
+          });
+
+          const config = {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            onUploadProgress(progressEvent) {
+              const uploaded = progressEvent.loaded / progressEvent.total;
+
+              progressbar.contents()[0].textContent =
+                Math.round(progressEvent.loaded / progressEvent.total * 100) + '%';
+
+              thisForm.find('.loaded').width(progressbar.width() * uploaded);
+
+              if (uploaded === 1) {
+                uploading = false;
+                button.prop({ disabled: false });
+
+                setTimeout(() => {
+                  if (!uploading) {
+                    progressbar.css({ visibility: 'hidden' });
+                  }
+                }, 2000);
+              }
+            },
+          };
+
+
+          axios.post('/upload', formData, config)
+          .then((response) => {
+            console.log('SUCCESS: ', response);
+          })
+          .catch((error) => {
+            console.log('ERROR: ', error);
+          });
+        });
+      });
+    </script>
   </body>
 </html>

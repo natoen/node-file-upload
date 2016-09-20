@@ -1,0 +1,25 @@
+form {
+  width: 250px;
+}
+
+form input:not([type="submit"]) {
+  width: 100%;
+}
+
+.progressbar {
+  position: relative;
+  height: 19px;
+  width: 100%;
+  border: 1px solid black;
+  text-align: center;
+  visibility: hidden;
+}
+
+.progressbar .loaded {
+  position: absolute;
+  top: 0px;
+  height: inherit;
+  width: 0;
+  background-color: green;
+  z-index: -1;
+}
