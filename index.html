@@ -19,7 +19,7 @@
       <input type="text" name="city" /><br />
       <label>Email:</label>
       <input type="text" name="country" /><br />
-      <label>Picture:</label>
+      <label>Files:</label>
       <input type="file" name="files" multiple /><br /><br />
       <div class="progressbar">.<div class="loaded"></div></div><br /><br />
       <input type='submit' />
@@ -64,6 +64,7 @@
 
               if (uploaded === 1) {
                 uploading = false;
+                thisForm[0].reset();
                 button.prop({ disabled: false });
 
                 setTimeout(() => {
